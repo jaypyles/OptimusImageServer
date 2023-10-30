@@ -2,7 +2,7 @@ build:
 	docker build -t optimusmediaserver .
 
 up:
-	docker run -d --name oms optimusmediaserver
+	docker run -d -p 8000:8000 --name oms optimusmediaserver
 
 destroy:
 	docker stop oms
