@@ -1,11 +1,17 @@
 build:
-	docker build -t optimusmediaserver .
+	docker-compose build
 
 up:
-	docker run -d -p 8000:8000 --name oms optimusmediaserver
+	docker-compose -f docker-compose.yml --env-file .env up -d
 
 destroy:
 	docker stop oms
 	docker rm oms
 
-.PHONY: build up destroy
+reup:
+	docker stop oms
+	docker rm oms
+	docker-compose build
+	docker-compose -f docker-compose.yml --env-file .env up -d
+
+.PHONY: build up destroy reup

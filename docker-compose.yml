@@ -1,0 +1,17 @@
+version: "3"
+services:
+  optimus_media_api:
+    container_name: oms
+    build:
+      context: "./"
+    ports:
+      - 8000:8000
+    volumes:
+      - /${MEDIA_PATH}:/stored_media/images
+    networks:
+      - webservice-network
+
+networks:
+  webservice-network:
+    external:
+      name: webservice-network
