@@ -2,12 +2,23 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 load_dotenv()
 images = os.path.join(os.path.abspath("/"), os.getenv("MEDIA_PATH"))  # type: ignore
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def try_image_path(image_path: str) -> str | None:
