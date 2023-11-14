@@ -10,7 +10,7 @@ images = os.path.join(os.path.abspath("/"), os.getenv("MEDIA_PATH"))  # type: ig
 
 app = FastAPI()
 
-origins = ["*"]
+origins = ["https://jaydenpyles.dev", "http://localhost"]
 
 app.add_middleware(
     CORSMiddleware,
