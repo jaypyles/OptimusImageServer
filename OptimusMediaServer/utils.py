@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 
 import requests
@@ -15,6 +16,8 @@ refresh_token = os.getenv("REFRESH_TOKEN")
 
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 basic_auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+
+LOG = logging.getLogger(__name__)
 
 
 def get_access_token():
@@ -62,8 +65,10 @@ def get_now_playing():
 def now_playing():
     """Get and format Spotify now playing."""
     now = get_now_playing()
+    print(now)
     return {
         "songName": now["item"]["name"],
+        "songURL": now["item"]["external_urls"]["spotify"],
         "albumName": now["item"]["album"]["name"],
         "artistName": now["item"]["artists"][0]["name"],
         "albumCover": now["item"]["album"]["images"][0]["url"],
