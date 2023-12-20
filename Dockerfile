@@ -6,4 +6,4 @@ WORKDIR /app
 COPY . .
 RUN pdm sync
 EXPOSE 8000
-CMD ["pdm", "run", "uvicorn", "OptimusMediaServer.app:app", "--reload", "--host", "0.0.0.0"]
+CMD ["pdm", "run", "uvicorn", "optimus_portfolio_api.app:app", "--reload", "--host", "0.0.0.0"]
