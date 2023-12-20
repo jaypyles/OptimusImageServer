@@ -7,15 +7,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from OptimusMediaServer.utils import now_playing
+from optimus_portfolio_api.github import get_most_recent_public_project
+from optimus_portfolio_api.utils import now_playing
 
 load_dotenv()
-images = os.path.join(os.path.abspath("/"), os.getenv("MEDIA_PATH"))  # type: ignore
+MEDIA_PATH = os.getenv("MEDIA_PATH")
 USER_ID = os.getenv("USER_ID")
-
+if MEDIA_PATH:
+    images = os.path.join(os.path.abspath("/"), MEDIA_PATH)  # type: ignore
 app = FastAPI()
 
-origins = ["*"]
+origins = ["jaydepyles.dev", "10.0.0.3", "localhost"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,3 +55,11 @@ async def get_playing():
 async def get_status():
     d = requests.get(f"https://api.lanyard.rest/v1/users/{USER_ID}").json()
     return d
+
+
+@app.get("/api/github/recent")
+async def get_recent_repo():
+    USERNAME = "jaypyles"
+    status = get_most_recent_public_project(USERNAME)
+    if status:
+        return json.dumps({"url": status})

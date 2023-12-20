@@ -1,7 +1,7 @@
 
 [project]
-name = ""
-version = ""
+name = "optimus_portfolio_api"
+version = "0.1.0"
 description = ""
 authors = [
     {name = "Jayden", email = "jpylesbusiness@gmail.com"},
