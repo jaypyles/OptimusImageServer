@@ -1,18 +1,19 @@
 import json
 import os
+from datetime import datetime
 
 import requests
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from optimus_portfolio_api.github import get_most_recent_public_project
-from optimus_portfolio_api.utils import now_playing
+from .bookstack import BOOKSTACK_BASE_URL, BookstackClient
+from .github import get_most_recent_public_project
+from .utils import now_playing
 
 MEDIA_PATH = os.getenv("MEDIA_PATH")
 DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
-assert MEDIA_PATH is not None
+assert MEDIA_PATH
 
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
 app = FastAPI()
@@ -64,3 +65,23 @@ async def get_recent_repo():
     status = get_most_recent_public_project(USERNAME)
     if status:
         return json.dumps({"url": status})
+
+
+@app.get("/api/bookstack/recent-page")
+async def get_recent_page():
+    bookstack = BookstackClient()
+    pages = []
+    for page in bookstack.get_pages():
+        pages.append(
+            {
+                "url": f"{BOOKSTACK_BASE_URL}/books/{page['book_slug']}/page/{page['slug']}",
+                "date": datetime.strptime(page["updated_at"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            }
+        )
+
+    sorted_pages = sorted(pages, key=lambda x: x["date"])
+    newest_page = sorted_pages[-1]
+
+    response = {"url": newest_page["url"]}
+
+    return json.dumps(response)
