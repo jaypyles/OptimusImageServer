@@ -10,7 +10,6 @@ from fastapi.responses import FileResponse
 from optimus_portfolio_api.github import get_most_recent_public_project
 from optimus_portfolio_api.utils import now_playing
 
-load_dotenv()
 MEDIA_PATH = os.getenv("MEDIA_PATH")
 DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
 assert MEDIA_PATH is not None
