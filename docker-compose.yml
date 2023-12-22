@@ -4,6 +4,8 @@ services:
     container_name: oms
     build:
       context: "./"
+    environment:
+      - DOPPLER_TOKEN=${DOPPLER_TOKEN}
     ports:
       - 9000:8000
     volumes:

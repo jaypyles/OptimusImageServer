@@ -8,11 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Parameters for the request
-authorization_code = os.getenv("CODE")
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
-redirect_uri = "http://localhost:3000"
-refresh_token = os.getenv("REFRESH_TOKEN")
+client_id = os.getenv("SPOTIFY_CLIENT_ID")
+client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+refresh_token = os.getenv("SPOTIFY_REFRESH_TOKEN")
 
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 basic_auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()

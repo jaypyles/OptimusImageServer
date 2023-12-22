@@ -1,17 +1,17 @@
-build:
-	docker-compose build
+export DOPPLER_TOKEN=$(shell doppler configs tokens create dev --plain --max-age=900s)
 
-up:
-	docker-compose -f docker-compose.yml --env-file .env up -d
+reup: destroy build up
 
 destroy:
-	docker stop oms
-	docker rm oms
+	doppler run -- docker stop oms
+	doppler run -- docker rm oms
 
-reup:
-	docker stop oms
-	docker rm oms
-	docker-compose build
-	docker-compose -f docker-compose.yml --env-file .env up -d
+build:
+	doppler run -- docker-compose build
+
+up:
+	doppler run -- docker-compose -f docker-compose.yml up -d
+
+
 
 .PHONY: build up destroy reup

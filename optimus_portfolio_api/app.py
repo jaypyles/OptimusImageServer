@@ -12,12 +12,14 @@ from optimus_portfolio_api.utils import now_playing
 
 load_dotenv()
 MEDIA_PATH = os.getenv("MEDIA_PATH")
-USER_ID = os.getenv("USER_ID")
-if MEDIA_PATH:
-    images = os.path.join(os.path.abspath("/"), MEDIA_PATH)  # type: ignore
+DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
+assert MEDIA_PATH is not None
+
+images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
 app = FastAPI()
 
 origins = ["jaydepyles.dev", "10.0.0.3", "localhost"]
+# origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,7 +55,7 @@ async def get_playing():
 
 @app.get("/api/discord/status")
 async def get_status():
-    d = requests.get(f"https://api.lanyard.rest/v1/users/{USER_ID}").json()
+    d = requests.get(f"https://api.lanyard.rest/v1/users/{DISCORD_USER_ID}").json()
     return d
 
 
