@@ -9,10 +9,12 @@ from fastapi.responses import FileResponse
 
 from .bookstack import BOOKSTACK_BASE_URL, BookstackClient
 from .github import get_most_recent_public_project
+from .notion import query_dev, query_ready
 from .utils import now_playing
 
 MEDIA_PATH = os.getenv("MEDIA_PATH")
 DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
+NOTION_SECRET = os.environ["NOTION_SECRET"]
 assert MEDIA_PATH
 
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
@@ -85,3 +87,17 @@ async def get_recent_page():
     response = {"url": newest_page["url"]}
 
     return json.dumps(response)
+
+
+@app.get("/api/notion/ready")
+async def get_ready_for_development():
+    pages = await query_ready(NOTION_SECRET)
+
+    return json.dumps({"data": pages})
+
+
+@app.get("/api/notion/dev")
+async def get_in_development():
+    pages = await query_dev(NOTION_SECRET)
+
+    return json.dumps({"data": pages})

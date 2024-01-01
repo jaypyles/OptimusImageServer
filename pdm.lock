@@ -69,10 +69,42 @@ requires_python = ">=3.7"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 
 [[package]]
+name = "httpcore"
+version = "1.0.2"
+requires_python = ">=3.8"
+summary = "A minimal low-level HTTP client."
+dependencies = [
+    "certifi",
+    "h11<0.15,>=0.13",
+]
+
+[[package]]
+name = "httpx"
+version = "0.26.0"
+requires_python = ">=3.8"
+summary = "The next generation HTTP client."
+dependencies = [
+    "anyio",
+    "certifi",
+    "httpcore==1.*",
+    "idna",
+    "sniffio",
+]
+
+[[package]]
 name = "idna"
 version = "3.4"
 requires_python = ">=3.5"
 summary = "Internationalized Domain Names in Applications (IDNA)"
+
+[[package]]
+name = "notion-client"
+version = "2.2.1"
+requires_python = ">=3.7, <4"
+summary = "Python client for the official Notion API"
+dependencies = [
+    "httpx>=0.15.0",
+]
 
 [[package]]
 name = "pydantic"
@@ -185,7 +217,7 @@ dependencies = [
 lock_version = "4.2"
 cross_platform = true
 groups = ["default"]
-content_hash = "sha256:5b13c265651807a148f3edf122e2fe37e4e1b2fa32b55559378027cc45a9b216"
+content_hash = "sha256:dd3b5ebc438bb2f55934529c63d428ecea449792e09f5d05c9077e565b830bc6"
 
 [metadata.files]
 "annotated-types 0.6.0" = [
@@ -312,9 +344,21 @@ content_hash = "sha256:5b13c265651807a148f3edf122e2fe37e4e1b2fa32b55559378027cc4
     {url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
     {url = "https://files.pythonhosted.org/packages/f5/38/3af3d3633a34a3316095b39c8e8fb4853a28a536e55d347bd8d8e9a14b03/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
 ]
+"httpcore 1.0.2" = [
+    {url = "https://files.pythonhosted.org/packages/18/56/78a38490b834fa0942cbe6d39bd8a7fd76316e8940319305a98d2b320366/httpcore-1.0.2.tar.gz", hash = "sha256:9fc092e4799b26174648e54b74ed5f683132a464e95643b226e00c2ed2fa6535"},
+    {url = "https://files.pythonhosted.org/packages/56/ba/78b0a99c4da0ff8b0f59defa2f13ca4668189b134bd9840b6202a93d9a0f/httpcore-1.0.2-py3-none-any.whl", hash = "sha256:096cc05bca73b8e459a1fc3dcf585148f63e534eae4339559c9b8a8d6399acc7"},
+]
+"httpx 0.26.0" = [
+    {url = "https://files.pythonhosted.org/packages/39/9b/4937d841aee9c2c8102d9a4eeb800c7dad25386caabb4a1bf5010df81a57/httpx-0.26.0-py3-none-any.whl", hash = "sha256:8915f5a3627c4d47b73e8202457cb28f1266982d1159bd5779d86a80c0eab1cd"},
+    {url = "https://files.pythonhosted.org/packages/bd/26/2dc654950920f499bd062a211071925533f821ccdca04fa0c2fd914d5d06/httpx-0.26.0.tar.gz", hash = "sha256:451b55c30d5185ea6b23c2c793abf9bb237d2a7dfb901ced6ff69ad37ec1dfaf"},
+]
 "idna 3.4" = [
     {url = "https://files.pythonhosted.org/packages/8b/e1/43beb3d38dba6cb420cefa297822eac205a277ab43e5ba5d5c46faf96438/idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
     {url = "https://files.pythonhosted.org/packages/fc/34/3030de6f1370931b9dbb4dad48f6ab1015ab1d32447850b9fc94e60097be/idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
+]
+"notion-client 2.2.1" = [
+    {url = "https://files.pythonhosted.org/packages/22/5e/977505b17c5528cffaaf561de46f58fa546345ae75866e3985039aaa991d/notion_client-2.2.1-py2.py3-none-any.whl", hash = "sha256:4ecf9ec527a124462f7bd407d9c9ead9853a9b2c8f00e56f3fa8fb15106ad871"},
+    {url = "https://files.pythonhosted.org/packages/cd/95/6e0d1cb377a296ecc940ad6c8662b6c18cada6b69cec1742295e9228a7d1/notion-client-2.2.1.tar.gz", hash = "sha256:3827e381ccb5a21aeb606686787edfb6c7a10681cb3507c4d606a1918e791061"},
 ]
 "pydantic 2.4.2" = [
     {url = "https://files.pythonhosted.org/packages/73/66/0a72c9fcde42e5650c8d8d5c5c1873b9a3893018020c77ca8eb62708b923/pydantic-2.4.2-py3-none-any.whl", hash = "sha256:bc3ddf669d234f4220e6e1c4d96b061abe0998185a8d7855c0126782b7abc8c1"},
