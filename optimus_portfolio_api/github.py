@@ -7,8 +7,11 @@ def get_most_recent_public_project(username: str):
 
     if response.status_code == 200:
         repos = response.json()
+
+        sorted_repos = sorted(repos, key=lambda x: x["pushed_at"])
+
         if repos:
-            return repos[0]["html_url"]
+            return sorted_repos[-1]["html_url"]
         else:
             return None
     else:
