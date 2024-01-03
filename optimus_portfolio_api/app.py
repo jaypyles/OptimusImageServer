@@ -77,7 +77,7 @@ async def get_recent_page():
     for page in bookstack.get_pages():
         pages.append(
             {
-                "url": f"{BOOKSTACK_BASE_URL}/books/{page['book_slug']}/page/{page['slug']}",
+                "url": f"{WIKI_URL}/books/{page['book_slug']}/page/{page['slug']}",
                 "date": datetime.strptime(page["updated_at"], "%Y-%m-%dT%H:%M:%S.%fZ"),
             }
         )
