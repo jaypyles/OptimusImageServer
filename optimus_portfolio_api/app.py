@@ -15,6 +15,7 @@ from .utils import now_playing
 MEDIA_PATH = os.getenv("MEDIA_PATH")
 DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
 NOTION_SECRET = os.environ["NOTION_SECRET"]
+WIKI_URL = os.environ["WIKI_URL"]
 assert MEDIA_PATH
 
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
