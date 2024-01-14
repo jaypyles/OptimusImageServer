@@ -18,6 +18,7 @@ NOTION_SECRET = os.environ["NOTION_SECRET"]
 WIKI_URL = os.environ["WIKI_URL"]
 assert MEDIA_PATH
 
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
 app = FastAPI()
 
@@ -46,7 +47,11 @@ def try_image_path(image_path: str) -> str | None:
 @app.get("/api/images/{image_file}")
 async def get_image(image_file: str):
     if path := try_image_path(image_file):
-        return FileResponse(path, media_type="image/jpeg")
+        _, file_extension = os.path.splitext(image_file)
+        if file_extension.lower() in ALLOWED_EXTENSIONS:
+            return FileResponse(path, media_type="image/jpeg")
+        else:
+            return {"error": "Invalid image file format"}
     else:
         return {"error": "Image not found"}
 
