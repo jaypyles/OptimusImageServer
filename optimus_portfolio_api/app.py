@@ -73,6 +73,8 @@ async def get_recent_repo():
     status = get_most_recent_public_project(USERNAME)
     if status:
         return json.dumps({"url": status})
+    else:
+        return json.dumps({"url": ""})
 
 
 @app.get("/api/bookstack/recent-page")
