@@ -14,4 +14,4 @@ WORKDIR /app
 COPY . .
 RUN pdm sync
 EXPOSE 8000
-CMD ["doppler", "run", "--", "pdm", "run", "uvicorn", "optimus_portfolio_api.app:app", "--reload", "--host", "0.0.0.0"]
+CMD ["doppler", "run", "--", "pdm", "run", "uvicorn", "optimus_portfolio_api.app:app",  "--host", "0.0.0.0"]

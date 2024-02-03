@@ -7,7 +7,7 @@ services:
     environment:
       - DOPPLER_TOKEN=${DOPPLER_TOKEN}
     ports:
-      - 9000:8000
+      - 8000:8000
     volumes:
       - /${MEDIA_PATH}:/stored_media/images
     networks:
