@@ -22,7 +22,7 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
 app = FastAPI()
 
-origins = ["jaydepyles.dev", "10.0.0.3", "localhost"]
+origins = ["jaydepyles.dev", "10.0.0.6", "localhost"]
 # origins = ["*"]
 
 app.add_middleware(
