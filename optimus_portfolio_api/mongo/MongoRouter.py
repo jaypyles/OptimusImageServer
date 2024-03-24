@@ -1,9 +1,7 @@
-import base64
 import os
 
 from bson import ObjectId
 from fastapi import APIRouter, Response
-from fastapi.responses import FileResponse
 from gridfs import GridFS
 from pymongo import MongoClient
 
