@@ -6,8 +6,18 @@ services:
       context: "./"
     environment:
       - DOPPLER_TOKEN=${DOPPLER_TOKEN}
-    ports:
-      - 8000:8000
+    command:
+      [
+        "doppler",
+        "run",
+        "--",
+        "pdm",
+        "run",
+        "uvicorn",
+        "optimus_portfolio_api.app:app",
+        "--host",
+        "0.0.0.0",
+      ]
     volumes:
       - /${MEDIA_PATH}:/stored_media/images
     networks:

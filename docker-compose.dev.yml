@@ -1,0 +1,20 @@
+version: "3"
+services:
+  optimus_media_api:
+    ports:
+      - 8000:8000
+    volumes:
+      - ./optimus_portfolio_api:/app/optimus_portfolio_api
+    command:
+      [
+        "doppler",
+        "run",
+        "--",
+        "pdm",
+        "run",
+        "uvicorn",
+        "optimus_portfolio_api.app:app",
+        "--host",
+        "0.0.0.0",
+        "--reload",
+      ]

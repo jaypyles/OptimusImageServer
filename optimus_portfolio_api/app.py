@@ -7,10 +7,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from .bookstack import BOOKSTACK_BASE_URL, BookstackClient
-from .github import get_most_recent_public_project
-from .notion import query_dev, query_ready
-from .utils import now_playing
+from optimus_portfolio_api.bookstack import BOOKSTACK_BASE_URL, BookstackClient
+from optimus_portfolio_api.github import get_most_recent_public_project
+from optimus_portfolio_api.mongo.MongoRouter import mongo_router
+from optimus_portfolio_api.notion import query_dev, query_ready
+from optimus_portfolio_api.utils import now_playing
 
 MEDIA_PATH = os.getenv("MEDIA_PATH")
 DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
@@ -21,6 +22,7 @@ assert MEDIA_PATH
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
 app = FastAPI()
+app.include_router(mongo_router)
 
 origins = ["jaydepyles.dev", "10.0.0.6", "localhost"]
 # origins = ["*"]
