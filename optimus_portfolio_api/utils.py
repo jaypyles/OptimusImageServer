@@ -28,6 +28,87 @@ class AccessTokenResponse(TypedDict):
     scope: str
 
 
+class ExternalUrls(TypedDict):
+    spotify: str
+
+
+class Artist(TypedDict):
+    external_urls: ExternalUrls
+    href: str
+    id: str
+    name: str
+    type: str
+    uri: str
+
+
+class Album(TypedDict):
+    album_type: str
+    artists: list[Artist]
+    available_markets: list[str]
+    external_urls: ExternalUrls
+    href: str
+    id: str
+    images: list[dict[str, int | str]]
+    name: str
+    release_date: str
+    release_date_precision: str
+    total_tracks: int
+    type: str
+    uri: str
+
+
+class Item(TypedDict):
+    album: Album
+    artists: list[Artist]
+    available_markets: list[str]
+    disc_number: int
+    duration_ms: int
+    explicit: bool
+    external_ids: dict[str, str]
+    external_urls: ExternalUrls
+    href: str
+    id: str
+    is_local: bool
+    name: str
+    popularity: int
+    preview_url: str
+    track_number: int
+    type: str
+    uri: str
+
+
+class Context(TypedDict):
+    external_urls: ExternalUrls
+    href: str
+    type: str
+    uri: str
+
+
+class Actions(TypedDict):
+    disallows: dict[str, bool]
+
+
+class SpotifyResponse(TypedDict):
+    timestamp: int
+    context: Context
+    progress_ms: int
+    item: Item
+    currently_playing_type: str
+    actions: Actions
+    is_playing: bool
+
+
+class SpotifyNowPlaying(TypedDict):
+    songName: str
+    songURL: str
+    albumName: str
+    artistName: str
+    albumCover: str
+
+
+NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
+
+
 def get_access_token() -> AccessTokenResponse | None:
     payload = {"grant_type": "refresh_token", "refresh_token": refresh_token}
 
@@ -41,49 +122,43 @@ def get_access_token() -> AccessTokenResponse | None:
     if response.status_code == 200:
         res: AccessTokenResponse = response.json()
         return res
-    else:
-        print(f"Failed to obtain the access token. Status code: {response.status_code}")
-        print(f"Response: {response.text}")
-        return None
+
+    return None
 
 
-NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
-
-
-def get_now_playing():
+def get_now_playing() -> SpotifyResponse | None:
     access_token_res = get_access_token()
     if not access_token_res:
         return
 
     access_token = access_token_res.get("access_token")
 
-    if access_token:
-        headers = {"Authorization": f"Bearer {access_token}"}
-
-        response = requests.get(NOW_PLAYING_URL, headers=headers)
-
-        if response.status_code == 200:
-            print(f"RESPONSE JSON: {response.json()}")
-            return response.json()
-        else:
-            print(
-                f"Failed to fetch currently playing. Status code: {response.status_code}"
-            )
-            print(f"Response: {response.text}")
-            return None
-    else:
-        print("Access token not obtained.")
+    if not access_token:
         return None
 
+    headers = {"Authorization": f"Bearer {access_token}"}
 
-def now_playing():
+    response = requests.get(NOW_PLAYING_URL, headers=headers)
+
+    if response.status_code == 200:
+        res: SpotifyResponse = response.json()
+        print(res)
+        return res
+
+
+def now_playing() -> SpotifyNowPlaying | None:
     """Get and format Spotify now playing."""
     now = get_now_playing()
-    print(now)
-    return {
+
+    if not now:
+        return
+
+    spotify_now_playing: SpotifyNowPlaying = {
         "songName": now["item"]["name"],
         "songURL": now["item"]["external_urls"]["spotify"],
         "albumName": now["item"]["album"]["name"],
         "artistName": now["item"]["artists"][0]["name"],
-        "albumCover": now["item"]["album"]["images"][0]["url"],
+        "albumCover": now["item"]["album"]["images"][0]["url"],  # type: ignore[reportAssignmentType]
     }
+
+    return spotify_now_playing

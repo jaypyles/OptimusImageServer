@@ -61,7 +61,8 @@ async def get_image(image_file: str) -> FileResponse | JSONResponse:
 
 @app.get(path="/api/spotify/now-playing")
 async def get_playing() -> JSONResponse:
-    return JSONResponse(content=now_playing())
+    playing = now_playing()
+    return JSONResponse(content=playing)
 
 
 @app.get(path="/api/discord/status")
