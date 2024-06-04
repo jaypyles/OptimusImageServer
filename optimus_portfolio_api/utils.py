@@ -1,11 +1,13 @@
+# STL
+import os
 import base64
 import logging
-import os
 
+# PDM
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+_ = load_dotenv()
 
 # Parameters for the request
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
