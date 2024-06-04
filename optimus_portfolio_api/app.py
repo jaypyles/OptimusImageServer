@@ -47,16 +47,16 @@ def try_image_path(image_path: str) -> str | None:
     return None
 
 
-@app.get(path="/api/images/{image_file}")
-async def get_image(image_file: str) -> FileResponse | dict[str, str]:
+@app.get(path="/api/images/{image_file}", response_model=None)
+async def get_image(image_file: str) -> FileResponse | JSONResponse:
     if path := try_image_path(image_path=image_file):
         _, file_extension = os.path.splitext(image_file)
         if file_extension.lower() in ALLOWED_EXTENSIONS:
             return FileResponse(path, media_type="image/jpeg")
         else:
-            return {"error": "Invalid image file format"}
+            return JSONResponse({"error": "Invalid image file format"})
     else:
-        return {"error": "Image not found"}
+        return JSONResponse({"error": "Image not found"})
 
 
 @app.get(path="/api/spotify/now-playing")

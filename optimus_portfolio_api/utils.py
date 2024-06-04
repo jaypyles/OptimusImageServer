@@ -2,6 +2,7 @@
 import os
 import base64
 import logging
+from typing import TypedDict
 
 # PDM
 import requests
@@ -20,7 +21,14 @@ basic_auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
 LOG = logging.getLogger(__name__)
 
 
-def get_access_token():
+class AccessTokenResponse(TypedDict):
+    access_token: str
+    token_type: str
+    expires_in: int
+    scope: str
+
+
+def get_access_token() -> AccessTokenResponse | None:
     payload = {"grant_type": "refresh_token", "refresh_token": refresh_token}
 
     headers = {
@@ -31,7 +39,8 @@ def get_access_token():
     response = requests.post(TOKEN_URL, data=payload, headers=headers)
 
     if response.status_code == 200:
-        return response.json()
+        res: AccessTokenResponse = response.json()
+        return res
     else:
         print(f"Failed to obtain the access token. Status code: {response.status_code}")
         print(f"Response: {response.text}")
@@ -42,7 +51,11 @@ NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
 
 
 def get_now_playing():
-    access_token = get_access_token().get("access_token")
+    access_token_res = get_access_token()
+    if not access_token_res:
+        return
+
+    access_token = access_token_res.get("access_token")
 
     if access_token:
         headers = {"Authorization": f"Bearer {access_token}"}
@@ -50,6 +63,7 @@ def get_now_playing():
         response = requests.get(NOW_PLAYING_URL, headers=headers)
 
         if response.status_code == 200:
+            print(f"RESPONSE JSON: {response.json()}")
             return response.json()
         else:
             print(
