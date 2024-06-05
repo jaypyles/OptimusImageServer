@@ -35,7 +35,7 @@ def format_date_with_suffix(date: datetime) -> str:
 @mongo_router.get(path="/api/post_images/{image_id}")
 async def get_image(image_id: str) -> Response:
     client: MongoClient[dict[str, Any]] = MongoClient(
-        uri=f"mongodb://{os.getenv('MONGO_USERNAME')}:{os.getenv('MONGO_PASSWORD')}@uploader-mongo:27017/"
+        f"mongodb://{os.getenv('MONGO_USERNAME')}:{os.getenv('MONGO_PASSWORD')}@uploader-mongo:27017/"
     )
     db = client["posts"]
     fs = GridFS(database=db)
