@@ -1,12 +1,15 @@
-import json
+# STL
 import os
+import json
 from enum import Enum
+from typing import TypedDict
 
+# PDM
 import urllib3
 
-BOOKSTACK_TOKEN_ID = os.getenv("BOOKSTACK_TOKEN_ID")
-BOOKSTACK_TOKEN_SECRET = os.getenv("BOOKSTACK_TOKEN_SECRET")
-BOOKSTACK_BASE_URL = os.getenv("BOOKSTACK_BASE_URL")
+BOOKSTACK_TOKEN_ID = os.environ["BOOKSTACK_TOKEN_ID"]
+BOOKSTACK_TOKEN_SECRET = os.environ["BOOKSTACK_TOKEN_SECRET"]
+BOOKSTACK_BASE_URL = os.environ["BOOKSTACK_BASE_URL"]
 
 
 assert BOOKSTACK_TOKEN_ID
@@ -23,6 +26,16 @@ class RequestType(Enum):
     GET = "GET"
 
 
+class BookstackValue(TypedDict):
+    updated_at: str
+    book_slug: str
+    slug: str
+
+
+class BookstackResponse(TypedDict):
+    data: list[BookstackValue]
+
+
 class BookstackClient:
     def __init__(self) -> None:
         self.id = BOOKSTACK_TOKEN_ID
@@ -37,12 +50,12 @@ class BookstackClient:
         resp = self.http.request(request_type.value, request_url, headers=self.headers)
         return resp
 
-    def get_pages(self) -> list:
+    def get_pages(self) -> list[BookstackValue]:
         """Get Bookstack's pages from the Client"""
         resp = self._make_request(RequestType.GET, BookstackAPIEndpoints.PAGES)
         assert resp
 
-        data = json.loads(resp.data.decode())
+        data: BookstackResponse = json.loads(resp.data.decode())
         return data["data"]
 
 

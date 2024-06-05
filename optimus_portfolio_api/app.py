@@ -1,30 +1,31 @@
-import json
+# STL
 import os
+from typing import Any  # type: ignore[reportAny]
 from datetime import datetime
 
+# PDM
 import requests
 from fastapi import FastAPI
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 
-from optimus_portfolio_api.bookstack import BOOKSTACK_BASE_URL, BookstackClient
-from optimus_portfolio_api.github import get_most_recent_public_project
-from optimus_portfolio_api.mongo.MongoRouter import mongo_router
-from optimus_portfolio_api.notion import query_dev, query_ready
+# LOCAL
 from optimus_portfolio_api.utils import now_playing
+from optimus_portfolio_api.github import get_most_recent_public_project
+from optimus_portfolio_api.bookstack import BookstackClient
+from optimus_portfolio_api.mongo.MongoRouter import mongo_router
 
-MEDIA_PATH = os.getenv("MEDIA_PATH")
-DISCORD_USER_ID = os.getenv("DISCORD_USER_ID")
-NOTION_SECRET = os.environ["NOTION_SECRET"]
-WIKI_URL = os.environ["WIKI_URL"]
-assert MEDIA_PATH
+MEDIA_PATH: str = os.environ["MEDIA_PATH"]
+DISCORD_USER_ID: str = os.environ["DISCORD_USER_ID"]
+NOTION_SECRET: str = os.environ["NOTION_SECRET"]
+WIKI_URL: str = os.environ["WIKI_URL"]
 
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
-images = os.path.join(os.path.abspath("/"), MEDIA_PATH)
-app = FastAPI()
-app.include_router(mongo_router)
+ALLOWED_EXTENSIONS: set[str] = {".jpg", ".jpeg", ".png"}
+images: str = os.path.join(os.path.abspath("/"), MEDIA_PATH)
+app: FastAPI = FastAPI()
+app.include_router(router=mongo_router)
 
-origins = ["jaydepyles.dev", "10.0.0.6", "localhost"]
+origins: list[str] = ["jaydepyles.dev", "10.0.0.6", "localhost"]
 # origins = ["*"]
 
 app.add_middleware(
@@ -38,56 +39,64 @@ app.add_middleware(
 
 def try_image_path(image_path: str) -> str | None:
     """Try and check for image extensions extensions"""
-    path = os.path.join(images, image_path)
+    path: str = os.path.join(images, image_path)
 
-    if os.path.exists(path):
-        return path
+    if not os.path.exists(path):
+        return
 
-    return None
-
-
-@app.get("/api/images/{image_file}")
-async def get_image(image_file: str):
-    if path := try_image_path(image_file):
-        _, file_extension = os.path.splitext(image_file)
-        if file_extension.lower() in ALLOWED_EXTENSIONS:
-            return FileResponse(path, media_type="image/jpeg")
-        else:
-            return {"error": "Invalid image file format"}
-    else:
-        return {"error": "Image not found"}
+    return path
 
 
-@app.get("/api/spotify/now-playing")
-async def get_playing():
-    return json.dumps(now_playing())
+@app.get(path="/api/images/{image_file}", response_model=None)
+async def get_image(image_file: str) -> FileResponse | JSONResponse:
+    if not (path := try_image_path(image_path=image_file)):
+        return JSONResponse({"error": "Image not found"})
+
+    _, file_extension = os.path.splitext(image_file)
+
+    if file_extension.lower() not in ALLOWED_EXTENSIONS:
+        return JSONResponse({"error": "Invalid image file format"})
+
+    return FileResponse(path, media_type="image/jpeg")
 
 
-@app.get("/api/discord/status")
-async def get_status():
-    d = requests.get(f"https://api.lanyard.rest/v1/users/{DISCORD_USER_ID}").json()
+@app.get(path="/api/spotify/now-playing")
+async def get_playing() -> JSONResponse:
+    playing = now_playing()
+
+    return JSONResponse(content=playing)
+
+
+@app.get(path="/api/discord/status")
+async def get_status() -> dict[str, Any]:
+    d: dict[str, Any] = requests.get(
+        url=f"https://api.lanyard.rest/v1/users/{DISCORD_USER_ID}"
+    ).json()
+
     return d
 
 
-@app.get("/api/github/recent")
-async def get_recent_repo():
+@app.get(path="/api/github/recent")
+async def get_recent_repo() -> JSONResponse:
     USERNAME = "jaypyles"
-    status = get_most_recent_public_project(USERNAME)
-    if status:
-        return json.dumps({"url": status})
-    else:
-        return json.dumps({"url": ""})
+    status: str | None = get_most_recent_public_project(username=USERNAME)
+
+    if not status:
+        return JSONResponse(content={"url": ""})
+
+    return JSONResponse(content={"url": status})
 
 
-@app.get("/api/bookstack/recent-page")
-async def get_recent_page():
-    bookstack = BookstackClient()
-    pages = []
+@app.get(path="/api/bookstack/recent-page")
+async def get_recent_page() -> JSONResponse:
+    bookstack: BookstackClient = BookstackClient()
+    pages: list[dict[str, str | datetime]] = []
     for page in bookstack.get_pages():
+        updated_at: str = page["updated_at"]
         pages.append(
             {
                 "url": f"{WIKI_URL}/books/{page['book_slug']}/page/{page['slug']}",
-                "date": datetime.strptime(page["updated_at"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+                "date": datetime.strptime(updated_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
             }
         )
 
@@ -96,18 +105,4 @@ async def get_recent_page():
 
     response = {"url": newest_page["url"]}
 
-    return json.dumps(response)
-
-
-@app.get("/api/notion/ready")
-async def get_ready_for_development():
-    pages = await query_ready(NOTION_SECRET)
-
-    return json.dumps({"data": pages})
-
-
-@app.get("/api/notion/dev")
-async def get_in_development():
-    pages = await query_dev(NOTION_SECRET)
-
-    return json.dumps({"data": pages})
+    return JSONResponse(content=response)
