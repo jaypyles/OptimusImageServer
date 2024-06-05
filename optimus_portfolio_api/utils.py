@@ -6,16 +6,13 @@ from typing import TypedDict
 
 # PDM
 import requests
-from dotenv import load_dotenv
 
-_ = load_dotenv()
-
-# Parameters for the request
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 refresh_token = os.getenv("SPOTIFY_REFRESH_TOKEN")
 
 TOKEN_URL = "https://accounts.spotify.com/api/token"
+NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
 basic_auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
 
 LOG = logging.getLogger(__name__)
@@ -104,9 +101,6 @@ class SpotifyNowPlaying(TypedDict):
     albumName: str
     artistName: str
     albumCover: str
-
-
-NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing"
 
 
 def get_access_token() -> AccessTokenResponse | None:
