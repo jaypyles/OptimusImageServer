@@ -32,6 +32,10 @@ class BookstackValue(TypedDict):
     slug: str
 
 
+class BookstackResponse(TypedDict):
+    data: list[BookstackValue]
+
+
 class BookstackClient:
     def __init__(self) -> None:
         self.id = BOOKSTACK_TOKEN_ID
@@ -50,9 +54,6 @@ class BookstackClient:
         """Get Bookstack's pages from the Client"""
         resp = self._make_request(RequestType.GET, BookstackAPIEndpoints.PAGES)
         assert resp
-
-        class BookstackResponse(TypedDict):
-            data: list[BookstackValue]
 
         data: BookstackResponse = json.loads(resp.data.decode())
         return data["data"]

@@ -119,46 +119,41 @@ def get_access_token() -> AccessTokenResponse | None:
 
     response = requests.post(TOKEN_URL, data=payload, headers=headers)
 
-    if response.status_code == 200:
-        res: AccessTokenResponse = response.json()
-        return res
+    if response.status_code != 200:
+        return
 
-    return None
+    res: AccessTokenResponse = response.json()
+    return res
 
 
 def get_now_playing() -> SpotifyResponse | None:
-    access_token_res = get_access_token()
-    if not access_token_res:
+    if not (access_token_res := get_access_token()):
         return
 
-    access_token = access_token_res.get("access_token")
-
-    if not access_token:
-        return None
+    if not (access_token := access_token_res.get("access_token")):
+        return
 
     headers = {"Authorization": f"Bearer {access_token}"}
-
     response = requests.get(NOW_PLAYING_URL, headers=headers)
 
-    if response.status_code == 200:
-        res: SpotifyResponse = response.json()
-        print(res)
-        return res
+    if not response.status_code != 200:
+        return
+
+    res: SpotifyResponse = response.json()
+    return res
 
 
 def now_playing() -> SpotifyNowPlaying | None:
     """Get and format Spotify now playing."""
-    now = get_now_playing()
-
-    if not now:
+    if not (now_playing := get_now_playing()):
         return
 
     spotify_now_playing: SpotifyNowPlaying = {
-        "songName": now["item"]["name"],
-        "songURL": now["item"]["external_urls"]["spotify"],
-        "albumName": now["item"]["album"]["name"],
-        "artistName": now["item"]["artists"][0]["name"],
-        "albumCover": now["item"]["album"]["images"][0]["url"],  # type: ignore[reportAssignmentType]
+        "songName": now_playing["item"]["name"],
+        "songURL": now_playing["item"]["external_urls"]["spotify"],
+        "albumName": now_playing["item"]["album"]["name"],
+        "artistName": now_playing["item"]["artists"][0]["name"],
+        "albumCover": now_playing["item"]["album"]["images"][0]["url"],  # type: ignore[reportAssignmentType]
     }
 
     return spotify_now_playing

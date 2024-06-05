@@ -41,27 +41,29 @@ def try_image_path(image_path: str) -> str | None:
     """Try and check for image extensions extensions"""
     path: str = os.path.join(images, image_path)
 
-    if os.path.exists(path):
-        return path
+    if not os.path.exists(path):
+        return
 
-    return None
+    return path
 
 
 @app.get(path="/api/images/{image_file}", response_model=None)
 async def get_image(image_file: str) -> FileResponse | JSONResponse:
-    if path := try_image_path(image_path=image_file):
-        _, file_extension = os.path.splitext(image_file)
-        if file_extension.lower() in ALLOWED_EXTENSIONS:
-            return FileResponse(path, media_type="image/jpeg")
-        else:
-            return JSONResponse({"error": "Invalid image file format"})
-    else:
+    if not (path := try_image_path(image_path=image_file)):
         return JSONResponse({"error": "Image not found"})
+
+    _, file_extension = os.path.splitext(image_file)
+
+    if file_extension.lower() not in ALLOWED_EXTENSIONS:
+        return JSONResponse({"error": "Invalid image file format"})
+
+    return FileResponse(path, media_type="image/jpeg")
 
 
 @app.get(path="/api/spotify/now-playing")
 async def get_playing() -> JSONResponse:
     playing = now_playing()
+
     return JSONResponse(content=playing)
 
 
@@ -70,6 +72,7 @@ async def get_status() -> dict[str, Any]:
     d: dict[str, Any] = requests.get(
         url=f"https://api.lanyard.rest/v1/users/{DISCORD_USER_ID}"
     ).json()
+
     return d
 
 
