@@ -130,7 +130,7 @@ def get_now_playing() -> SpotifyResponse | None:
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(NOW_PLAYING_URL, headers=headers)
 
-    if not response.status_code != 200:
+    if response.status_code != 200:
         return
 
     res: SpotifyResponse = response.json()
